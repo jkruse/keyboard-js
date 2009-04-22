@@ -3,8 +3,8 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=windows-1252" />
     <title>Keyboard.js Test</title>
-    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/prototype/1.6.0.2/prototype.js"></script>
-    <!--<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.js"></script>-->
+    <!--<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/prototype/1.6.0.2/prototype.js"></script>-->
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.js"></script>
     <script type="text/javascript" src="keyboard.js"></script>
     
     <script type="text/javascript">
@@ -21,18 +21,37 @@
       }
       
       function setup(text, key) {
-        var id1, id2, id3, id4, e = document.createElement('div');
+        var id1, id2, id3, id4, id5, id6, id7, id8, e = document.createElement('div');
         e.id = '_' + key;
         id1 = e.id + '_raw';
         id2 = e.id + '_ctrl';
         id3 = e.id + '_shift';
         id4 = e.id + '_alt';
+        id5 = e.id + '_ctrl_shift';
+        id6 = e.id + '_ctrl_alt';
+        id7 = e.id + '_shift_alt';
+        id8 = e.id + '_ctrl_shift_alt';
         document.body.appendChild(e);
-        e.innerHTML = '<table cellspacing="5"><tr><td id="' + id1 + '">' + text + '</td><td id="' + id2 + '">Ctrl+' + text + '</td><td id="' + id3 + '">Shift+' + text + '</td><td id="' + id4 + '">Alt+' + text + '</td></tr></table>';
+        e.innerHTML = '<table cellspacing="5"><tr>' +
+          '<td id="' + id1 + '">' + text + '</td>' +
+          '<td id="' + id2 + '">Ctrl+' + text + '</td>' +
+          '<td id="' + id3 + '">Shift+' + text + '</td>' +
+          '<td id="' + id4 + '">Alt+' + text + '</td>' +
+          '<td id="' + id5 + '">Ctrl+Shift+' + text + '</td>' +
+          '<td id="' + id6 + '">Ctrl+Alt+' + text + '</td>' +
+          '<td id="' + id7 + '">Shift+Alt+' + text + '</td>' +
+          '<td id="' + id8 + '">Ctrl+Shift+Alt+' + text + '</td>' +
+          '</tr></table>';
         Keyboard.registerGlobal(key,             function (event) { good(id1); }, true);
         Keyboard.registerGlobal(key + KEY.CTRL,  function (event) { good(id2); }, true);
         Keyboard.registerGlobal(key + KEY.SHIFT, function (event) { good(id3); }, true);
         Keyboard.registerGlobal(key + KEY.ALT,   function (event) { good(id4); }, true);
+        Keyboard.registerGlobal(key + KEY.CTRL + KEY.SHIFT, function (event) { good(id5); }, true);
+        if (key !== KEY.F10) {
+          Keyboard.registerGlobal(key + KEY.CTRL + KEY.ALT,   function (event) { good(id6); }, true);
+        }
+        Keyboard.registerGlobal(key + KEY.SHIFT + KEY.ALT,  function (event) { good(id7); }, true);
+        Keyboard.registerGlobal(key + KEY.CTRL + KEY.SHIFT + KEY.ALT, function (event) { good(id8); }, true);
       }
       
       var onDomLoaded;
@@ -191,7 +210,7 @@
         border: 1px solid silver;
         text-align: center;
         padding: 5px;
-        width: 25%;
+        width: 12%;
         background-color: white;
       }
     </style>

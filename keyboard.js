@@ -1,7 +1,7 @@
 /**
  * Keyboard.js - keyboard event handling interface
  *             - for danish keyboards only(!!)
- *             - tested on Win-IE7, Win-FF2, Win-FF3, Win-Safari3 and Mac-Safari3 only
+ *             - tested on Win-IE7, Win-IE8, Win-FF2, Win-FF3, Win-Safari3 and Mac-Safari3 only
  *             - works with either Prototype or jQuery
  *
  * Examples:
@@ -47,7 +47,7 @@
  * JSLint "Good Parts" validated - try to keep it that way.
  *
  * @author Jakob Kruse <kruse@kruse-net.dk>
- * @version 1.1
+ * @version 1.2
  */
 
 /*jslint bitwise: false */
@@ -234,133 +234,199 @@ var Keyboard = function () {
   // Setup list of known unmappable keys
   broken = {};
   lib.each([
-    //ctrl+tab, alt+tab
-    { key: KEY.CTRL + KEY.TAB, name: "Ctrl+Tab", browsers: "Win-FF3, Win-IE7", does: "next tab" },
+    //tab
+    { key: KEY.CTRL + KEY.TAB, name: "Ctrl+Tab", browsers: "Win-FF3, Win-IE7, Win-IE8", does: "next tab" },
     { key: KEY.ALT + KEY.TAB, name: "Alt+Tab", browsers: "Win-all", does: "task switch" },
-    //alt+enter
-    { key: KEY.ALT + KEY.ENTER, name: "Alt+Enter", browsers: "Win-IE7", does: "full screen" },
+    { key: KEY.CTRL + KEY.SHIFT + KEY.TAB, name: "Ctrl+Shift+Tab", browsers: "Win-FF3, Win-IE7, Win-IE8", does: "previous tab" },
+    { key: KEY.SHIFT + KEY.ALT + KEY.TAB, name: "Shift+Alt+Tab", browsers: "Win-all", does: "reverse task switch" },
+    //enter
+    { key: KEY.ALT + KEY.ENTER, name: "Alt+Enter", browsers: "Win-IE7, Win-IE8", does: "full screen" },
     //break
     { key: KEY.BREAK, name: "Break", browsers: "Mac-all", does: "key doesn't exist on Mac" },
     { key: KEY.CTRL + KEY.BREAK, name: "Ctrl+Break", browsers: "Win-all, Mac-all", does: "nothing on Win, key doesn't exist on Mac" },
     { key: KEY.SHIFT + KEY.BREAK, name: "Shift+Break", browsers: "Mac-all", does: "key doesn't exist on Mac" },
     { key: KEY.ALT + KEY.BREAK, name: "Alt+Break", browsers: "Mac-all", does: "key doesn't exist on Mac" },
+    { key: KEY.CTRL + KEY.SHIFT + KEY.BREAK, name: "Ctrl+Shift+Break", browsers: "Win-all, Mac-all", does: "nothing on Win, key doesn't exist on Mac" },
+    { key: KEY.CTRL + KEY.SHIFT + KEY.ALT + KEY.BREAK, name: "Ctrl+Shift+Alt+Break", browsers: "Win-all, Mac-all", does: "nothing on Win, key doesn't exist on Mac" },
     //capslock
     { key: KEY.CAPSLOCK, name: "CapsLock", browsers: "all browsers" },
     { key: KEY.CTRL + KEY.CAPSLOCK, name: "Ctrl+CapsLock", browsers: "all browsers" },
     { key: KEY.SHIFT + KEY.CAPSLOCK, name: "Shift+CapsLock", browsers: "all browsers" },
     { key: KEY.ALT + KEY.CAPSLOCK, name: "Alt+CapsLock", browsers: "all browsers" },
-    //ctrl+esc, alt+esc
+    { key: KEY.CTRL + KEY.SHIFT + KEY.CAPSLOCK, name: "Ctrl+Shift+CapsLock", browsers: "Win-IE8", does: "nothing" },
+    { key: KEY.CTRL + KEY.SHIFT + KEY.ALT + KEY.CAPSLOCK, name: "Ctrl+Shift+Alt+CapsLock", browsers: "Win-IE8", does: "nothing" },
+    //esc
     { key: KEY.CTRL + KEY.ESC, name: "Ctrl+Esc", browsers: "Win-all", does: "start menu" },
     { key: KEY.ALT + KEY.ESC, name: "Alt+Esc", browsers: "Win-all", does: "task switch" },
-    //ctrl+space, alt+space
+    { key: KEY.CTRL + KEY.SHIFT + KEY.ESC, name: "Ctrl+Shift+Esc", browsers: "Win-all", does: "task manager" },
+    { key: KEY.CTRL + KEY.ALT + KEY.ESC, name: "Ctrl+Alt+Esc", browsers: "Win-all", does: "nothing" },
+    { key: KEY.SHIFT + KEY.ALT + KEY.ESC, name: "Shift+Alt+Esc", browsers: "Win-all", does: "task switch" },
+    { key: KEY.CTRL + KEY.SHIFT + KEY.ALT + KEY.ESC, name: "Ctrl+Shift+Alt+Esc", browsers: "Win-all", does: "nothing" },
+    //space
     { key: KEY.CTRL + KEY.SPACE, name: "Ctrl+Space", browsers: "Mac-all", does: "spotlight" },
     { key: KEY.ALT + KEY.SPACE, name: "Alt+Space", browsers: "Win-all", does: "system menu" },
-    //ctrl+PAGEUP
+    //pageup
     { key: KEY.CTRL + KEY.PAGEUP, name: "Ctrl+PAGEUP", browsers: "Win-FF3", does: "previous tab" },
-    //ctrl+PAGEDOWN
+    //pagedown
     { key: KEY.CTRL + KEY.PAGEDOWN, name: "Ctrl+PAGEDOWN", browsers: "Win-FF3", does: "next tab" },
-    //alt+home
-    { key: KEY.ALT + KEY.HOME, name: "Alt+Home", browsers: "Win-IE7", does: "home page" },
-    //alt+left
+    //end
+    { key: KEY.CTRL + KEY.ALT + KEY.END, name: "Ctrl+Alt+End", browsers: "Win-all", does: "task manager" },
+    //home
+    { key: KEY.ALT + KEY.HOME, name: "Alt+Home", browsers: "Win-IE7, Win-IE8", does: "home page" },
+    //left
     { key: KEY.ALT + KEY.LEFT, name: "Alt+Left", browsers: "Win-Safari3", does: "history back" },
-    //alt+right
+    //right
     { key: KEY.ALT + KEY.RIGHT, name: "Alt+Right", browsers: "Win-Safari3", does: "history forward" },
+    //delete
+    { key: KEY.CTRL + KEY.ALT + KEY.DELETE, name: "Ctrl+Alt+Delete", browsers: "Win-all", does: "task manager/menu" },
     //0
-    { key: KEY.CTRL + KEY.ZERO, name: "Ctrl+0", browsers: "Win-IE7, Win-Safari3", does: "reset zoom" },
+    { key: KEY.CTRL + KEY.ZERO, name: "Ctrl+0", browsers: "Win-IE7, Win-IE8, Win-Safari3", does: "reset zoom" },
     //umlaut
     { key: KEY.UMLAUT, name: "�", browsers: "Mac-Safari3" },
     { key: KEY.CTRL + KEY.UMLAUT, name: "Ctrl+�", browsers: "Mac-Safari3" },
     { key: KEY.SHIFT + KEY.UMLAUT, name: "Shift+�", browsers: "Mac-Safari3" },
     { key: KEY.ALT + KEY.UMLAUT, name: "Alt+�", browsers: "Mac-Safari3" },
-    //alt+a
-    { key: KEY.ALT + KEY.A, name: "Alt+A", browsers: "Win-IE7", does: "address bar" },
-    //alt+b
+    //a
+    { key: KEY.ALT + KEY.A, name: "Alt+A", browsers: "Win-IE7 (DK)", does: "address bar" },
+    //b
     { key: KEY.ALT + KEY.B, name: "Alt+B", browsers: "Win-Safari3", does: "bookmarks" },
-    //alt+d
-    { key: KEY.ALT + KEY.D, name: "Alt+D", browsers: "Win-IE7, Win-Safari3", does: "address bar" },
-    //alt+e
+    //d
+    { key: KEY.ALT + KEY.D, name: "Alt+D", browsers: "Win-IE7 (UK), Win-IE8 (UK), Win-Safari3", does: "address bar" },
+    { key: KEY.SHIFT + KEY.ALT + KEY.D, name: "Shift+Alt+D", browsers: "Win-IE8 (UK)", does: "address bar" },
+    //e
     { key: KEY.ALT + KEY.E, name: "Alt+E", browsers: "Win-Safari3", does: "edit menu" },
-    //ctrl+f, alt+f
-    { key: KEY.CTRL + KEY.F, name: "Ctrl+F", browsers: "Win-IE7, WIn-Safari3", does: "find" },
+    //f
+    { key: KEY.CTRL + KEY.F, name: "Ctrl+F", browsers: "Win-IE7, Win-IE8, Win-Safari3", does: "find" },
     { key: KEY.ALT + KEY.F, name: "Alt+F", browsers: "Win-Safari3", does: "file menu" },
-    //alt+h
+    //h
     { key: KEY.ALT + KEY.H, name: "Alt+H", browsers: "Win-Safari3", does: "help menu" },
-    //alt+i
+    //i
     { key: KEY.ALT + KEY.I, name: "Alt+I", browsers: "Win-Safari3", does: "history menu" },
-    //ctrl+o
-    { key: KEY.CTRL + KEY.O, name: "Ctrl+O", browsers: "Win-IE7, Win-Safari3", does: "open" },
-    //ctrl+p
-    { key: KEY.CTRL + KEY.P, name: "Ctrl+P", browsers: "Win-IE7, Win-Safari3", does: "print" },
-    //alt+v
+    //o
+    { key: KEY.CTRL + KEY.O, name: "Ctrl+O", browsers: "Win-IE7, Win-IE8, Win-Safari3", does: "open" },
+    //p
+    { key: KEY.CTRL + KEY.P, name: "Ctrl+P", browsers: "Win-IE7, Win-IE8, Win-Safari3", does: "print" },
+    //v
     { key: KEY.ALT + KEY.V, name: "Alt+V", browsers: "Win-Safari3", does: "view menu" },
-    //alt+w
+    //w
     { key: KEY.ALT + KEY.W, name: "Alt+W", browsers: "Win-Safari3", does: "window menu" },
-    //shift+pad-digits
-    { key: KEY.SHIFT + KEY.NUMPAD0, name: "Shift+Pad0", browsers: "all browsers" },
-    { key: KEY.SHIFT + KEY.NUMPAD1, name: "Shift+Pad1", browsers: "all browsers" },
-    { key: KEY.SHIFT + KEY.NUMPAD2, name: "Shift+Pad2", browsers: "all browsers" },
-    { key: KEY.SHIFT + KEY.NUMPAD3, name: "Shift+Pad3", browsers: "all browsers" },
-    { key: KEY.SHIFT + KEY.NUMPAD4, name: "Shift+Pad4", browsers: "all browsers" },
-    { key: KEY.SHIFT + KEY.NUMPAD5, name: "Shift+Pad5", browsers: "all browsers" },
-    { key: KEY.SHIFT + KEY.NUMPAD6, name: "Shift+Pad6", browsers: "all browsers" },
-    { key: KEY.SHIFT + KEY.NUMPAD7, name: "Shift+Pad7", browsers: "all browsers" },
-    { key: KEY.SHIFT + KEY.NUMPAD8, name: "Shift+Pad8", browsers: "all browsers" },
-    { key: KEY.SHIFT + KEY.NUMPAD9, name: "Shift+Pad9", browsers: "all browsers" },
-    //ctrl+pad+
-    { key: KEY.CTRL + KEY.ADD, name: "Ctrl+Pad+", browsers: "Win-IE7", does: "zoom" },
-    //ctrl+pad-
-    { key: KEY.CTRL + KEY.SUBTRACT, name: "Ctrl+Pad-", browsers: "Win-IE7", does: "zoom" },
-    //shift+pad-decimal
-    { key: KEY.SHIFT + KEY.DECIMAL, name: "Shift+PadDecimal", browsers: "all browsers" },
-    //f1, ctrl+f1, shift+f1
-    { key: KEY.F1, name: "F1", browsers: "Win-IE7", does: "help" },
-    { key: KEY.CTRL + KEY.F1, name: "Ctrl+F1", browsers: "Win-IE7, Mac-Safari3", does: "help on Windows, nothing on Mac" },
-    { key: KEY.SHIFT + KEY.F1, name: "Shift+F1", browsers: "Win-IE7", does: "help" },
+    //pad-digits
+    { key: KEY.SHIFT + KEY.NUMPAD0, name: "Shift+Pad0", browsers: "all browsers", does: "nothing" },
+    { key: KEY.SHIFT + KEY.NUMPAD1, name: "Shift+Pad1", browsers: "all browsers", does: "nothing" },
+    { key: KEY.SHIFT + KEY.NUMPAD2, name: "Shift+Pad2", browsers: "all browsers", does: "nothing" },
+    { key: KEY.SHIFT + KEY.NUMPAD3, name: "Shift+Pad3", browsers: "all browsers", does: "nothing" },
+    { key: KEY.SHIFT + KEY.NUMPAD4, name: "Shift+Pad4", browsers: "all browsers", does: "nothing" },
+    { key: KEY.SHIFT + KEY.NUMPAD5, name: "Shift+Pad5", browsers: "all browsers", does: "nothing" },
+    { key: KEY.SHIFT + KEY.NUMPAD6, name: "Shift+Pad6", browsers: "all browsers", does: "nothing" },
+    { key: KEY.SHIFT + KEY.NUMPAD7, name: "Shift+Pad7", browsers: "all browsers", does: "nothing" },
+    { key: KEY.SHIFT + KEY.NUMPAD8, name: "Shift+Pad8", browsers: "all browsers", does: "nothing" },
+    { key: KEY.SHIFT + KEY.NUMPAD9, name: "Shift+Pad9", browsers: "all browsers", does: "nothing" },
+    { key: KEY.CTRL + KEY.SHIFT + KEY.NUMPAD0, name: "Ctrl+Shift+Pad0", browsers: "all browsers", does: "nothing" },
+    { key: KEY.CTRL + KEY.SHIFT + KEY.NUMPAD1, name: "Ctrl+Shift+Pad1", browsers: "all browsers", does: "nothing" },
+    { key: KEY.CTRL + KEY.SHIFT + KEY.NUMPAD2, name: "Ctrl+Shift+Pad2", browsers: "all browsers", does: "nothing" },
+    { key: KEY.CTRL + KEY.SHIFT + KEY.NUMPAD3, name: "Ctrl+Shift+Pad3", browsers: "all browsers", does: "nothing" },
+    { key: KEY.CTRL + KEY.SHIFT + KEY.NUMPAD4, name: "Ctrl+Shift+Pad4", browsers: "all browsers", does: "nothing" },
+    { key: KEY.CTRL + KEY.SHIFT + KEY.NUMPAD5, name: "Ctrl+Shift+Pad5", browsers: "all browsers", does: "nothing" },
+    { key: KEY.CTRL + KEY.SHIFT + KEY.NUMPAD6, name: "Ctrl+Shift+Pad6", browsers: "all browsers", does: "nothing" },
+    { key: KEY.CTRL + KEY.SHIFT + KEY.NUMPAD7, name: "Ctrl+Shift+Pad7", browsers: "all browsers", does: "nothing" },
+    { key: KEY.CTRL + KEY.SHIFT + KEY.NUMPAD8, name: "Ctrl+Shift+Pad8", browsers: "all browsers", does: "nothing" },
+    { key: KEY.CTRL + KEY.SHIFT + KEY.NUMPAD9, name: "Ctrl+Shift+Pad9", browsers: "all browsers", does: "nothing" },
+    { key: KEY.SHIFT + KEY.ALT + KEY.NUMPAD0, name: "Shift+Alt+Pad0", browsers: "all browsers", does: "nothing" },
+    { key: KEY.SHIFT + KEY.ALT + KEY.NUMPAD1, name: "Shift+Alt+Pad1", browsers: "all browsers", does: "nothing" },
+    { key: KEY.SHIFT + KEY.ALT + KEY.NUMPAD2, name: "Shift+Alt+Pad2", browsers: "all browsers", does: "nothing" },
+    { key: KEY.SHIFT + KEY.ALT + KEY.NUMPAD3, name: "Shift+Alt+Pad3", browsers: "all browsers", does: "nothing" },
+    { key: KEY.SHIFT + KEY.ALT + KEY.NUMPAD4, name: "Shift+Alt+Pad4", browsers: "all browsers", does: "nothing" },
+    { key: KEY.SHIFT + KEY.ALT + KEY.NUMPAD5, name: "Shift+Alt+Pad5", browsers: "all browsers", does: "nothing" },
+    { key: KEY.SHIFT + KEY.ALT + KEY.NUMPAD6, name: "Shift+Alt+Pad6", browsers: "all browsers", does: "nothing" },
+    { key: KEY.SHIFT + KEY.ALT + KEY.NUMPAD7, name: "Shift+Alt+Pad7", browsers: "all browsers", does: "nothing" },
+    { key: KEY.SHIFT + KEY.ALT + KEY.NUMPAD8, name: "Shift+Alt+Pad8", browsers: "all browsers", does: "nothing" },
+    { key: KEY.SHIFT + KEY.ALT + KEY.NUMPAD9, name: "Shift+Alt+Pad9", browsers: "all browsers", does: "nothing" },
+    { key: KEY.CTRL + KEY.SHIFT + KEY.ALT + KEY.NUMPAD0, name: "Ctrl+Shift+Alt+Pad0", browsers: "all browsers", does: "nothing" },
+    { key: KEY.CTRL + KEY.SHIFT + KEY.ALT + KEY.NUMPAD1, name: "Ctrl+Shift+Alt+Pad1", browsers: "all browsers", does: "nothing" },
+    { key: KEY.CTRL + KEY.SHIFT + KEY.ALT + KEY.NUMPAD2, name: "Ctrl+Shift+Alt+Pad2", browsers: "all browsers", does: "nothing" },
+    { key: KEY.CTRL + KEY.SHIFT + KEY.ALT + KEY.NUMPAD3, name: "Ctrl+Shift+Alt+Pad3", browsers: "all browsers", does: "nothing" },
+    { key: KEY.CTRL + KEY.SHIFT + KEY.ALT + KEY.NUMPAD4, name: "Ctrl+Shift+Alt+Pad4", browsers: "all browsers", does: "nothing" },
+    { key: KEY.CTRL + KEY.SHIFT + KEY.ALT + KEY.NUMPAD5, name: "Ctrl+Shift+Alt+Pad5", browsers: "all browsers", does: "nothing" },
+    { key: KEY.CTRL + KEY.SHIFT + KEY.ALT + KEY.NUMPAD6, name: "Ctrl+Shift+Alt+Pad6", browsers: "all browsers", does: "nothing" },
+    { key: KEY.CTRL + KEY.SHIFT + KEY.ALT + KEY.NUMPAD7, name: "Ctrl+Shift+Alt+Pad7", browsers: "all browsers", does: "nothing" },
+    { key: KEY.CTRL + KEY.SHIFT + KEY.ALT + KEY.NUMPAD8, name: "Ctrl+Shift+Alt+Pad8", browsers: "all browsers", does: "nothing" },
+    { key: KEY.CTRL + KEY.SHIFT + KEY.ALT + KEY.NUMPAD9, name: "Ctrl+Shift+Alt+Pad9", browsers: "all browsers", does: "nothing" },
+    //pad+
+    { key: KEY.CTRL + KEY.ADD, name: "Ctrl+Pad+", browsers: "Win-IE7, Win-IE8", does: "zoom" },
+    { key: KEY.CTRL + KEY.SHIFT + KEY.ADD, name: "Ctrl+Shift+Pad+", browsers: "Win-IE7, Win-IE8", does: "zoom" },
+    //pad-
+    { key: KEY.CTRL + KEY.SUBTRACT, name: "Ctrl+Pad-", browsers: "Win-IE7, Win-IE8", does: "zoom" },
+    { key: KEY.CTRL + KEY.SHIFT + KEY.SUBTRACT, name: "Ctrl+Shift+Pad-", browsers: "Win-IE7, Win-IE8", does: "zoom" },
+    //pad-decimal
+    { key: KEY.SHIFT + KEY.DECIMAL, name: "Shift+PadDecimal", browsers: "all browsers", does: "nothing" },
+    { key: KEY.CTRL + KEY.SHIFT + KEY.DECIMAL, name: "Ctrl+Shift+PadDecimal", browsers: "all browsers", does: "nothing" },
+    { key: KEY.CTRL + KEY.ALT + KEY.DECIMAL, name: "Ctrl+Alt+PadDecimal", browsers: "Win-all", does: "task manager/menu" },
+    { key: KEY.SHIFT + KEY.ALT + KEY.DECIMAL, name: "Shift+Alt+PadDecimal", browsers: "all browsers", does: "nothing" },
+    { key: KEY.CTRL + KEY.SHIFT + KEY.ALT + KEY.DECIMAL, name: "Ctrl+Shift+Alt+PadDecimal", browsers: "Win-all", does: "task manager/menu" },
+    //f1
+    { key: KEY.F1, name: "F1", browsers: "Win-IE7, Win-IE8", does: "help" },
+    { key: KEY.CTRL + KEY.F1, name: "Ctrl+F1", browsers: "Win-IE7, Win-IE8, Mac-Safari3", does: "help on Windows, nothing on Mac" },
+    { key: KEY.SHIFT + KEY.F1, name: "Shift+F1", browsers: "Win-IE7, Win-IE8", does: "help" },
+    { key: KEY.CTRL + KEY.SHIFT + KEY.F1, name: "Ctrl+Shift+F1", browsers: "Win-IE7, Win-IE8", does: "help" },
+    { key: KEY.CTRL + KEY.SHIFT + KEY.ALT + KEY.F1, name: "Ctrl+Shift+Alt+F1", browsers: "Win-IE7, Win-IE8", does: "help" },
     //f3
+    { key: KEY.F3, name: "F3", browsers: "Win-IE8", does: "find" },
     { key: KEY.CTRL + KEY.F3, name: "Ctrl+F3", browsers: "Mac-all", does: "finder" },
-    //ctrl+f4, alt+f4
+    //f4
+    { key: KEY.F4, name: "F4", browsers: "Win-IE8", does: "address bar/history" },
     { key: KEY.CTRL + KEY.F4, name: "Ctrl+F4", browsers: "Win-all", does: "close window" },
     { key: KEY.ALT + KEY.F4, name: "Alt+F4", browsers: "Win-all", does: "close browser" },
     //f5
-    { key: KEY.F5, name: "F5", browsers: "Win-Safari3", does: "reload" },
-    //alt+f6
-    { key: KEY.ALT + KEY.F6, name: "Alt+F6", browsers: "Win-IE7, Win-Safari3" },
+    { key: KEY.F5, name: "F5", browsers: "Win-IE8, Win-Safari3", does: "reload" },
+    //f6
+    { key: KEY.ALT + KEY.F6, name: "Alt+F6", browsers: "Win-IE7, Win-IE8, Win-Safari3", does: "nothing" },
+    { key: KEY.SHIFT + KEY.ALT + KEY.F6, name: "Shift+Alt+F6", browsers: "Win-IE7, Win-IE8, Win-Safari3", does: "nothing" },
     //f8
     { key: KEY.CTRL + KEY.F8, name: "Ctrl+F8", browsers: "Mac-all", does: "time machine" },
     //f9
     { key: KEY.F9, name: "F9", browsers: "Mac-all", does: "exposé" },
     { key: KEY.SHIFT + KEY.F9, name: "Shift+F9", browsers: "Mac-all", does: "exposé" },
     //f10
-    { key: KEY.F10, name: "F10", browsers: "Mac-all", does: "exposé" },
+    { key: KEY.F10, name: "F10", browsers: "Win-IE8, Mac-all", does: "menu bar on Windows, exposé on Mac" },
     { key: KEY.SHIFT + KEY.F10, name: "Shift+F10", browsers: "Win-Safari3, Mac-all", does: "context menu on Windows, exposé on Mac" },
     //f11
-    { key: KEY.F11, name: "F11", browsers: "Mac-all", does: "exposé" },
+    { key: KEY.F11, name: "F11", browsers: "Win-IE8, Mac-all", does: "full screen on Windows, exposé on Mac" },
     { key: KEY.SHIFT + KEY.F11, name: "Shift+F11", browsers: "Mac-all", does: "exposé" },
     //f12
     { key: KEY.F12, name: "F12", browsers: "Mac-all", does: "exposé" },
     { key: KEY.SHIFT + KEY.F12, name: "Shift+F12", browsers: "Mac-all", does: "exposé" },
     //numlock
     { key: KEY.NUMLOCK, name: "NumLock", browsers: "all browsers" },
-    { key: KEY.CTRL + KEY.NUMLOCK, name: "Ctrl+NumLock", browsers: "all browsers" },
+    { key: KEY.CTRL + KEY.NUMLOCK, name: "Ctrl+NumLock", browsers: "all browsers", does: "nothing" },
     { key: KEY.SHIFT + KEY.NUMLOCK, name: "Shift+NumLock", browsers: "all browsers" },
     { key: KEY.ALT + KEY.NUMLOCK, name: "Alt+NumLock", browsers: "all browsers" },
+    { key: KEY.CTRL + KEY.SHIFT + KEY.NUMLOCK, name: "Ctrl+Shift+NumLock", browsers: "all browsers" },
+    { key: KEY.CTRL + KEY.ALT + KEY.NUMLOCK, name: "Ctrl+Alt+NumLock", browsers: "all browsers" },
+    { key: KEY.SHIFT + KEY.ALT + KEY.NUMLOCK, name: "Shift+Alt+NumLock", browsers: "all browsers" },
+    { key: KEY.CTRL + KEY.SHIFT + KEY.ALT + KEY.NUMLOCK, name: "Ctrl+Shift+Alt+NumLock", browsers: "all browsers" },
     //scrolllock
     { key: KEY.SCROLL, name: "ScrollLock", browsers: "all browsers" },
-    { key: KEY.CTRL + KEY.SCROLL, name: "Ctrl+ScrollLock", browsers: "all browsers" },
+    { key: KEY.CTRL + KEY.SCROLL, name: "Ctrl+ScrollLock", browsers: "all browsers", does: "nothing" },
     { key: KEY.SHIFT + KEY.SCROLL, name: "Shift+ScrollLock", browsers: "all browsers" },
     { key: KEY.ALT + KEY.SCROLL, name: "Alt+ScrollLock", browsers: "all browsers" },
+    { key: KEY.CTRL + KEY.SHIFT + KEY.SCROLL, name: "Ctrl+Shift+ScrollLock", browsers: "all browsers" },
+    { key: KEY.CTRL + KEY.ALT + KEY.SCROLL, name: "Ctrl+Alt+ScrollLock", browsers: "all browsers" },
+    { key: KEY.SHIFT + KEY.ALT + KEY.SCROLL, name: "Shift+Alt+ScrollLock", browsers: "all browsers" },
+    { key: KEY.CTRL + KEY.SHIFT + KEY.ALT + KEY.SCROLL, name: "Ctrl+Shift+Alt+ScrollLock", browsers: "all browsers" },
     //plus
     { key: KEY.PLUS, name: "+", browsers: "Win-FF2, Win-FF3" },
-    { key: KEY.CTRL + KEY.PLUS, name: "Ctrl++", browsers: "Win-FF2, Win-FF3, Win-IE7, Win-Safari3", does: "zoom in FF2, IE7 and Safari 3" },
+    { key: KEY.CTRL + KEY.PLUS, name: "Ctrl++", browsers: "Win-all", does: "zoom" },
     { key: KEY.SHIFT + KEY.PLUS, name: "Shift++", browsers: "Win-FF2, Win-FF3" },
     { key: KEY.ALT + KEY.PLUS, name: "Alt++", browsers: "Win-FF2, Win-FF3" },
+    { key: KEY.CTRL + KEY.SHIFT + KEY.PLUS, name: "Ctrl+Shift++", browsers: "Win-all", does: "zoom" },
     //minus
     { key: KEY.MINUS, name: "-", browsers: "Win-FF2, Win-FF3" },
-    { key: KEY.CTRL + KEY.MINUS, name: "Ctrl+-", browsers: "Win-FF2, Win-FF3, Win-IE7, Win-Safari3", does: "zoom in IE7 and Safari 3" },
+    { key: KEY.CTRL + KEY.MINUS, name: "Ctrl+-", browsers: "Win-all", does: "zoom" },
     { key: KEY.SHIFT + KEY.MINUS, name: "Shift+-", browsers: "Win-FF2, Win-FF3" },
     { key: KEY.ALT + KEY.MINUS, name: "Alt+-", browsers: "Win-FF2, Win-FF3" },
+    { key: KEY.CTRL + KEY.SHIFT + KEY.MINUS, name: "Ctrl+Shift+-", browsers: "Win-all", does: "zoom" },
     //æ
-    { key: KEY.ALT + KEY.AE, name: "Alt+Æ", browsers: "Win-IE7" },
+    { key: KEY.ALT + KEY.AE, name: "Alt+Æ", browsers: "Win-IE7 (DK)" },
     //accent
     { key: KEY.ACCENT, name: "´", browsers: "Mac-Safari3" },
     { key: KEY.CTRL + KEY.ACCENT, name: "Ctrl+´", browsers: "Mac-Safari3" },
@@ -372,7 +438,7 @@ var Keyboard = function () {
     { key: KEY.SHIFT + KEY.HALF, name: "Shift+½", browsers: "Mac-Safari3" },
     { key: KEY.ALT + KEY.HALF, name: "Alt+½", browsers: "Mac-Safari3" },
     //alt
-    { key: KEY.ALT, name: "Alt", browsers: "IE7", does: "activate menu" }
+    { key: KEY.ALT, name: "Alt", browsers: "Win-IE7, Win-IE8", does: "activate menu" }
   ], function (obj) {
     var text = obj.name + ' is unmappable in ' + obj.browsers;
     if (obj.does) {
@@ -561,7 +627,7 @@ var Keyboard = function () {
               div.id = '__altkeyhandler_' + index[0];
               div.accessKey = String.fromCharCode(index[0]);
               div.tabIndex = -1; // better make it focusable or accesskey will not work
-              Element.setStyle(div, { // better make it invisible (note: visibility=hidden will not work)
+              lib.setStyle(div, { // better make it invisible (note: visibility=hidden will not work)
                 position: 'absolute',
                 width: 0,
                 height: 0,
